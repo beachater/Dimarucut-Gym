@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gym Ni Dan</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f9f9f9;
+        }
+        .form-container, .table-container {
+            margin-bottom: 20px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .form-container h2, .table-container h2 {
+            margin-bottom: 20px;
+        }
+        .form-container form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .form-container form input, .form-container form select {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .form-container form button {
+            grid-column: span 2;
+            padding: 10px 15px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+        }
+        .form-container form button:hover {
+            background-color: #0056b3;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        th:nth-child(1) {
+            width: 5%;
+        }
+        th:nth-child(2) {
+            width: 20%;
+        }
+        th:nth-child(3), th:nth-child(4) {
+            width: 20%;
+        }
+        th:nth-child(5) {
+            width: 15%;
+        }
+        th:nth-child(6) {
+            width: 20%;
+        }
+        td button {
+            padding: 5px 10px;
+            margin: 2px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            color: white;
+        }
+        .update-btn {
+            background-color: #28a745;
+        }
+        .remove-btn {
+            background-color: #dc3545;
+        }
+        .edit-btn {
+            background-color: #17a2b8;
+        }
+        td button:hover {
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2>Gym Ni Dan</h2>
+        <form id="taskForm">
+            <input type="text" id="taskTitle" placeholder="Name" required>
+            <input type="date" id="membershipDate" placeholder="Membership Date" required>
+            <input type="date" id="expirationDate" placeholder="Expiration Date" required>
+            <select id="membershipType" required>
+                <option value="" disabled selected>Select Membership Type</option>
+                <option value="Basic">Basic</option>
+                <option value="Premium">Premium</option>
+                <option value="VIP">VIP</option>
+            </select>
+            <button type="submit" class="add-btn">Add</button>
+        </form>
+    </div>
+
+    <div class="table-container">
+        <h2>Data</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Name</th>
+                    <th>Membership Date</th>
+                    <th>Expiration Date</th>
+                    <th>Type</th>
+                    <th>Operations</th>
+                </tr>
+            </thead>
+            <tbody id="taskTableBody">
+                <!-- Dynamic rows will be added here -->
+            </tbody>
+        </table>
+    </div>
+
+    <div class="table-container">
+        <h2>Current Members</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Membership Date</th>
+                    <th>Expiration Date</th>
+                    <th>Type</th>
+                </tr>
+            </thead>
+            <tbody id="currentMembersTableBody">
+                <!-- Dynamic rows will be added here -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        let taskId = 1;
+        let editingRow = null;
+        const taskForm = document.getElementById('taskForm');
+        const taskTableBody = document.getElementById('taskTableBody');
+        const currentMembersTableBody = document.getElementById('currentMembersTableBody');
+
+        taskForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const title = document.getElementById('taskTitle').value;
+            const membershipDate = document.getElementById('membershipDate').value;
+            const expirationDate = document.getElementById('expirationDate').value;
+            const membershipType = document.getElementById('membershipType').value;
+
+            if (editingRow) {
+                // Update existing row
+                const currentMemberRow = document.querySelector(`#currentMembersTableBody tr[data-id="${editingRow.dataset.id}"]`);
+                
+                editingRow.children[1].textContent = title;
+                editingRow.children[2].textContent = membershipDate;
+                editingRow.children[3].textContent = expirationDate;
+                editingRow.children[4].textContent = membershipType;
+
+                currentMemberRow.children[0].textContent = title;
+                currentMemberRow.children[1].textContent = membershipDate;
+                currentMemberRow.children[2].textContent = expirationDate;
+                currentMemberRow.children[3].textContent = membershipType;
+
+                editingRow = null;
+            } else {
+                // Add new row
+                const row = document.createElement('tr');
+                row.dataset.id = taskId;
+                row.innerHTML = `
+                    <td>${taskId}</td>
+                    <td>${title}</td>
+                    <td>${membershipDate}</td>
+                    <td>${expirationDate}</td>
+                    <td>${membershipType}</td>
+                    <td>
+                        <button class="edit-btn" onclick="editTask(this)">Edit</button>
+                        <button class="remove-btn" onclick="removeTask(this)">Remove</button>
+                    </td>
+                `;
+                taskTableBody.appendChild(row);
+
+                // Add to Current Members table
+                const currentRow = document.createElement('tr');
+                currentRow.dataset.id = taskId;
+                currentRow.innerHTML = `
+                    <td>${title}</td>
+                    <td>${membershipDate}</td>
+                    <td>${expirationDate}</td>
+                    <td>${membershipType}</td>
+                `;
+                currentMembersTableBody.appendChild(currentRow);
+
+                taskId++;
+            }
+            
+            taskForm.reset();
+        });
+
+        function editTask(button) {
+            const row = button.parentElement.parentElement;
+            editingRow = row;
+            document.getElementById('taskTitle').value = row.children[1].textContent;
+            document.getElementById('membershipDate').value = row.children[2].textContent;
+            document.getElementById('expirationDate').value = row.children[3].textContent;
+            document.getElementById('membershipType').value = row.children[4].textContent;
+        }
+
+        function removeTask(button) {
+            const row = button.parentElement.parentElement;
+            const id = row.dataset.id;
+
+            // Remove from Memberships table
+            taskTableBody.removeChild(row);
+
+            // Remove from Current Members table
+            const currentMemberRow = document.querySelector(`#currentMembersTableBody tr[data-id="${id}"]`);
+            currentMembersTableBody.removeChild(currentMemberRow);
+        }
+    </script>
+</body>
+</html>
