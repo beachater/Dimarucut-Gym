@@ -111,8 +111,6 @@
             </select>
             <button type="submit" id="addButton" class="add-btn">Add</button>
             <button type="button" id="saveButton" class="add-btn" style="display:none;">Save</button>
-
-            
         </form>
     </div>
 
@@ -212,64 +210,63 @@
         });
 
         async function editTask(button) {
-    const row = button.parentElement.parentElement;
-    editingRow = row;
-    document.getElementById('taskTitle').value = row.children[1].textContent;
-    document.getElementById('membershipDate').value = row.children[2].textContent;
-    document.getElementById('expirationDate').value = row.children[3].textContent;
-    document.getElementById('membershipType').value = row.children[4].textContent;
-    
-    document.getElementById('editingMemberId').value = row.dataset.id;
-    document.getElementById('addButton').style.display = 'none';
-    document.getElementById('saveButton').style.display = 'block';
-}
+            const row = button.parentElement.parentElement;
+            editingRow = row;
+            document.getElementById('taskTitle').value = row.children[1].textContent;
+            document.getElementById('membershipDate').value = row.children[2].textContent;
+            document.getElementById('expirationDate').value = row.children[3].textContent;
+            document.getElementById('membershipType').value = row.children[4].textContent;
+            
+            document.getElementById('editingMemberId').value = row.dataset.id;
+            document.getElementById('addButton').style.display = 'none';
+            document.getElementById('saveButton').style.display = 'block';
+        }
 
-async function saveChanges() {
-    const id = document.getElementById('editingMemberId').value;
-    const title = document.getElementById('taskTitle').value;
-    const membershipDate = document.getElementById('membershipDate').value;
-    const expirationDate = document.getElementById('expirationDate').value;
-    const membershipType = document.getElementById('membershipType').value;
+        async function saveChanges() {
+            const id = document.getElementById('editingMemberId').value;
+            const title = document.getElementById('taskTitle').value;
+            const membershipDate = document.getElementById('membershipDate').value;
+            const expirationDate = document.getElementById('expirationDate').value;
+            const membershipType = document.getElementById('membershipType').value;
 
-    const csrfToken = document.querySelector('input[name="_token"]').value;
+            const csrfToken = document.querySelector('input[name="_token"]').value;
 
-    const response = await fetch(`/api/gymsub/${id}`, {
-        method: 'PATCH',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': csrfToken
-        },
-        body: JSON.stringify({
-            name: title,
-            start_date: membershipDate,
-            end_date: expirationDate,
-            membership_type: membershipType
-        })
-    });
+            const response = await fetch(`/api/gymsub/${id}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken
+                },
+                body: JSON.stringify({
+                    name: title,
+                    start_date: membershipDate,
+                    end_date: expirationDate,
+                    membership_type: membershipType
+                })
+            });
 
-    if (response.ok) {
-        const data = await response.json();
-        console.log(data.message);
+            if (response.ok) {
+                const data = await response.json();
+                console.log(data.message);
 
-        // Update the row in the table with new values
-        editingRow.children[1].textContent = title;
-        editingRow.children[2].textContent = membershipDate;
-        editingRow.children[3].textContent = expirationDate;
-        editingRow.children[4].textContent = membershipType;
+                // Update the row in the table with new values
+                editingRow.children[1].textContent = title;
+                editingRow.children[2].textContent = membershipDate;
+                editingRow.children[3].textContent = expirationDate;
+                editingRow.children[4].textContent = membershipType;
 
-        // Reset the form and buttons
-        taskForm.reset();
-        document.getElementById('addButton').style.display = 'block';
-        document.getElementById('saveButton').style.display = 'none';
-        editingRow = null;
-    } else {
-        const errorData = await response.json();
-        alert('Error: ' + errorData.message);
-    }
-}
+                // Reset the form and buttons
+                taskForm.reset();
+                document.getElementById('addButton').style.display = 'block';
+                document.getElementById('saveButton').style.display = 'none';
+                editingRow = null
+            } else {
+                const errorData = await response.json();
+                alert('Error: ' + errorData.message);
+            }
+        }
 
-document.getElementById('saveButton').addEventListener('click', saveChanges);
-
+        document.getElementById('saveButton').addEventListener('click', saveChanges);
 
         async function removeTask(button) {
             const row = button.parentElement.parentElement;
@@ -292,44 +289,6 @@ document.getElementById('saveButton').addEventListener('click', saveChanges);
                 alert('Error: ' + errorData.message);
             }
         }
-    taskForm.addEventListener('submit', async function(event) {
-    event.preventDefault();
-
-    const title = document.getElementById('taskTitle').value;
-    const membershipDate = document.getElementById('membershipDate').value;
-    const expirationDate = document.getElementById('expirationDate').value;
-    const membershipType = document.getElementById('membershipType').value;
-
-    const csrfToken = document.querySelector('input[name="_token"]').value;
-
-    const response = await fetch('/api/gymsub', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': csrfToken
-        },
-        body: JSON.stringify({
-            name: title,
-            start_date: membershipDate,
-            end_date: expirationDate,
-            membership_type: membershipType
-        })
-    });
-
-    if (response.ok) {
-        const data = await response.json();
-        addRowToTable(taskId, title, membershipDate, expirationDate, membershipType);
-        taskId++;
-        taskForm.reset();
-        document.getElementById('addButton').style.display = 'block';
-        document.getElementById('saveButton').style.display = 'none';
-        editingRow = null;
-    } else {
-        const errorData = await response.json();
-        alert('Error: ' + errorData.message);
-    }
-});
-
 
         // Fetch existing members when the page loads
         fetchMembers();
