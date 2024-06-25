@@ -14,7 +14,21 @@ return new class extends Migration
         Schema::create('enrollments', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->string('name');
+
+            // User Information
+            $table->string('first_name');
+            $table->string('middle_name')->nullable(); // Allow null values for middle name
+            $table->string('last_name');
+            $table->date('date_of_birth');
+            $table->string('place_of_birth');
+            $table->enum('gender', ['male', 'female']); // Define enum for gender
+
+            // Contact Information
+            $table->string('address');
+            $table->string('mobile_number');
+            $table->string('email')->unique(); // Ensure unique email addresses
+
+            // Section information (assuming it's still needed)
             $table->string('section'); 
         });
     }

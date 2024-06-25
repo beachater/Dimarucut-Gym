@@ -8,7 +8,7 @@ use App\Http\Controllers\EnrollmentController;
 //     return $request->user();
 // })->middleware('auth:sanctum');
 
-Route::post('/enrollments', [EnrollmentController::class, 'add']);
-Route::get('/enrollments', [EnrollmentController::class, 'get']);
-Route::put('/enrollments/{id}', [EnrollmentController::class, 'put']);
-Route::delete('/enrollments/{id}', [EnrollmentController::class, 'delete']);
+Route::post('/gymsub', [EnrollmentController::class, 'add']);
+Route::get('/gymsub', [EnrollmentController::class, 'get']);
+Route::put('/gymsub/{id}', [EnrollmentController::class, 'put']);
+Route::delete('/gymsub/{id}', [EnrollmentController::class, 'delete']);
