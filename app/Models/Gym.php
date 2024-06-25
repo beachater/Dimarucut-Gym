@@ -13,11 +13,6 @@ class Gym extends Model
         'name',
         'start_date',
         'end_date',
-        'membership_type',
-        'mobile_number',
-        'email',
-        'emergency_contact_name',
-        'emergency_contact_number' ,
-        'notes'
+        'membership_type'
     ];
 }

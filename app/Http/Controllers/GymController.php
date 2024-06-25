@@ -21,11 +21,6 @@ class GymController extends Controller
             'start_date' => $request->start_date,
             'end_date' => $request->end_date,
             'membership_type' => $request->membership_type,
-            'mobile_number' => $request->mobile_number,
-            'email' => $request->email,
-            'emergency_contact_name' => $request->emergency_contact_name,
-            'emergency_contact_number' => $request->emergency_contact_number,
-            'notes' => $request->notes
         ]);
 
         return response([
@@ -95,22 +90,6 @@ class GymController extends Controller
         if ($request->has('membership_type')) {
             $memberInfo->membership_type = $request->membership_type;
         }
-        if ($request->has('mobile_number')) {
-            $memberInfo->mobile_number = $request->mobile_number;
-        }
-        if ($request->has('email')) {
-            $memberInfo->email = $request->email;
-        }
-        if ($request->has('emergency_contact_name')) {
-            $memberInfo->emergency_contact_name = $request->emergency_contact_name;
-        }
-        if ($request->has('emergency_contact_number')) {
-            $memberInfo->emergency_contact_number = $request->emergency_contact_number;
-        }
-        if ($request->has('notes')) {
-            $memberInfo->notes = $request->notes;
-        }
-
         // Save the updated member info
         $memberInfo->save();
 
